@@ -1,9 +1,10 @@
 const commentParser = require('comment-parser');
+const { get_files } = require("./actions/readdir")
 
 const parseFile = file => new Promise((resolve,reject)=>{
     commentParser.file(file, (err,result)=>err ? reject(err) : resolve(result));
 })
-
+module.exports.
 parseFile('./sample.js').then(c=> {
     let all = Object.values(c).reduce((result,item)=>{
         if (!item.tags.some(i=>i.tag==='socket.io-doc')) return result;
@@ -24,4 +25,3 @@ parseFile('./sample.js').then(c=> {
 
     console.log(all);
 }).catch(e=>console.error(e));
-
