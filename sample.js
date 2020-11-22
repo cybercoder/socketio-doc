@@ -24,5 +24,3 @@
  * @data {object}
  * @example 5
  */
-
- console.log()

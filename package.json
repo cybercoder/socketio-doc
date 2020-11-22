@@ -4,7 +4,7 @@
   "description": "Socket.io inline document generator.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/.bin/mocha --timeout 2000"
   },
   "repository": {
     "type": "git",
@@ -25,5 +25,9 @@
     "comment-parser": "^0.7.6",
     "glob": "^7.1.6",
     "showdown": "^1.9.1"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^8.2.1"
   }
 }
