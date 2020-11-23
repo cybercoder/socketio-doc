@@ -1,6 +1,7 @@
-
-const {get_files, parse_file}=require('./lib');
+const {get_files, parse_file, createLinks}=require('./lib');
 const {source} = require('./socket.io-doc.conf.json');
+const {Converter} = require('showdown');
+const {writeFileSync, fstat} = require('fs');
 
 get_files(source)
 .then(async files=>{
@@ -23,7 +24,41 @@ get_files(source)
             return result;
         },[]);
     }));
-    console.log(results.flat());
+    results=results.flat();
+    let emitLinks = createLinks(results.filter(r=>r.action==='listen'));
+    let converter = new Converter();
+
+    writeFileSync('./templates/default/index.html',
+    `<!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Socket.io-doc</title>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/picnic">
+            <link rel="stylesheet" href="./css/style.css">
+        </head>
+        <body>
+            <header class="flex one center">
+                <span>Head</span>
+            </header>
+            <div class="flex three demo">
+                <div class="full sixth-900">
+                    <span>
+                        ${converter.makeHtml(emitLinks)}
+                    </span>
+                </div>
+                <div class="full two-third-900"><span>2</span></div>
+                <div class="full sixth-900"><span>3</span></div>
+            </div>
+            <footer class="flex full">
+                
+            </footer>
+        </body>
+    </html>`
+    )
+
+    
 })
 .catch(e=>console.error(e));
 

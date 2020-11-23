@@ -1,0 +1,26 @@
+
+header {
+    background: rgb(210, 210, 245);
+    padding: 5px;
+}
+
+#middle {
+
+}
+aside {
+    background: rgb(245, 255, 245);
+    padding: 5px;
+}
+
+main {
+    padding: 5px;
+    background:white;
+}
+
+footer {
+    background: rgb(255, 255, 232);
+}
+
+div {
+    border: 1px solid teal;
+}
