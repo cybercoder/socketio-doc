@@ -5,7 +5,7 @@
 /**
  * Singleline or multiline description text. Line breaks are preserved111.
  * @socket.io-doc
- * @emit send send a message
+ * @emit sendme sendme a message
  * @tag Messaging
  * @data {object}
  * @example
@@ -19,7 +19,7 @@
  /**
  * Singleline or multiline description text. Line breaks are preserved.
  * @socket.io-doc
- * @listen onReceive receive
+ * @listen onReceiveme receiveme
  * @tag Messaging
  * @data {object}
  * @example 5

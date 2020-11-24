@@ -1,4 +1,4 @@
-const {get_files, parse_file, createLinks}=require('./lib');
+const {get_files, parse_file, createLinks, extracted_docs_to_html}=require('./lib');
 const {source} = require('./socket.io-doc.conf.json');
 const {Converter} = require('showdown');
 const {writeFileSync, fstat} = require('fs');
@@ -27,7 +27,7 @@ get_files(source)
     results=results.flat();
     let emitLinks = createLinks(results.filter(r=>r.action==='listen'));
     let converter = new Converter();
-
+    console.log(extracted_docs_to_html(results));
     writeFileSync('./templates/default/index.html',
     `<!DOCTYPE html>
     <html lang="en">
@@ -48,7 +48,11 @@ get_files(source)
                         ${converter.makeHtml(emitLinks)}
                     </span>
                 </div>
-                <div class="full two-third-900"><span>2</span></div>
+                <div class="full two-third-900">
+                    <span>
+                        ${extracted_docs_to_html(results)}
+                    </span>
+                </div>
                 <div class="full sixth-900"><span>3</span></div>
             </div>
             <footer class="flex full">
