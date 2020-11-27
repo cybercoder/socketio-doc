@@ -41,13 +41,40 @@ div {
     display: block;
 }
 
+#showConsole {
+    display: none;
+    background: rgb(128, 233, 9);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    position: fixed;
+    cursor: pointer;
+    height: 50px;
+    width: 50px;
+    border-radius: 25px;
+    justify-content: center;
+    align-items: center;
+    right: 5px;
+    bottom: 5px;
+    z-index: 9999;
+}
+
 #consoleContainer {
-    background: grey;
+    box-shadow: 0 -4px 8px 0 rgba(0, 0, 0, 0.2), 0 -6px 20px 0 rgba(0, 0, 0, 0.19);
+    background: rgba(0, 0, 0, 0.7);
     position: fixed;
     width: 100%;
     bottom: 0;
     z-index: 999;
     overflow-y: scroll;
+}
+#consoleHead {
+    position: fixed;
+    width: 100%;
+    background: aliceblue;
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .normalConsole {
@@ -59,14 +86,14 @@ div {
 
 ul#allEventsList {
     list-style: none;
-    margin: 0;
+    margin: 20px 0px 0 0;
     padding: 5px;
 }
 
 ul#allEventsList>li:nth-child(odd) {
-    background: lightyellow;
+    background: rgba(238, 214, 250, 0.4);
 }
   
 ul#allEventsList>li:nth-child(even) {
-    background: mistyrose;
+    background: rgba(232, 245, 222, 0.4);
 }

@@ -40,10 +40,12 @@ get_files(source)
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Socket.io-doc</title>
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/picnic">
+            <link href="https://cdn.lineicons.com/2.0/LineIcons.css" rel="stylesheet">
             <link rel="stylesheet" href="./css/style.css">
             <script src="https://cdn.socket.io/socket.io-3.0.3.min.js"></script>
         </head>
         <body>
+        
             <div class="flex two">
                 <div class="full half-900">
                     <span>
@@ -74,18 +76,28 @@ get_files(source)
             <footer class="flex full">
                 
             </footer>
+            
             <div id="consoleContainer" class="normalConsole">
-                <div>
-                    <button
+                <div id="consoleHead">
+                    <i
+                        class="lni lni-arrow-up-circle"
+                        style="display: block; color: darkslategray;"
                         id="toggleCollapseConsole"
                         onClick="document.getElementById('consoleContainer').classList.toggle('fullscreenConsole')"
-                    >
-                        X
-                    </button>
-                    <ul id="allEventsList">
-
-                    </ul>
+                    ></i>
+                    <small>result window</small>
+                    <i 
+                        class="lni lni-close"
+                        style="background: red; color: white;"
+                        onClick="document.getElementById('consoleContainer').style.display = 'none'; document.getElementById('showConsole').style.display='flex';"
+                    ></i>
                 </div>
+                <ul id="allEventsList">
+
+                </ul>
+            </div>
+            <div id="showConsole" onClick="document.getElementById('consoleContainer').style.display='flex'; this.style.display='none'">
+                <i class="lni lni-32 lni-code-alt"></i>
             </div>
         </body>
     </html>
