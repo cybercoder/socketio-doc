@@ -74,10 +74,24 @@ get_files(source)
             <footer class="flex full">
                 
             </footer>
+            <div id="consoleContainer" class="normalConsole">
+                <div>
+                    <button
+                        id="toggleCollapseConsole"
+                        onClick="document.getElementById('consoleContainer').classList.toggle('fullscreenConsole')"
+                    >
+                        X
+                    </button>
+                    <ul id="allEventsList">
+
+                    </ul>
+                </div>
+            </div>
         </body>
     </html>
     <script>
         var socket;
+
         function toggleConnect() {
             if (socket && socket.connected) {
                 socket.disconnect();
@@ -94,6 +108,12 @@ get_files(source)
                 toggleConnectBtn.classList.add('success');
             });
 
+            socket.on('disconnect',()=>{
+                let toggleConnectBtn=document.getElementById("connectBtn");
+                toggleConnectBtn.textContent='Connect' ;
+                return toggleConnectBtn.classList.remove('success');
+            })
+
             var onevent = socket.onevent;
             socket.onevent = function (packet) {
                 var args = packet.data || [];
@@ -103,8 +123,9 @@ get_files(source)
             };
 
             socket.on("*",function(event,data) {
-                console.log(event);
-                console.log(data);
+                let li = document.createElement('li');
+                li.innerHTML="<h2><span class='label'>"+event+"</span></h2><code>"+data+"</code>";
+                document.getElementById("allEventsList").appendChild(li);
             });
         }
     </script>
