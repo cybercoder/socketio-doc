@@ -84,16 +84,21 @@ div {
     height: 100vh;
 }
 
-ul#allEventsList {
+ol#allEventsList {
     list-style: none;
     margin: 20px 0px 0 0;
     padding: 5px;
 }
 
-ul#allEventsList>li:nth-child(odd) {
-    background: rgba(238, 214, 250, 0.4);
+ol#allEventsList>li {
+    border-radius: 7px;
+    padding:5px;
+}
+
+ol#allEventsList>li:nth-child(odd) {
+    background: rgba(238, 218, 248, 0.8);
 }
   
-ul#allEventsList>li:nth-child(even) {
-    background: rgba(232, 245, 222, 0.4);
+ol#allEventsList>li:nth-child(even) {
+    background: rgba(238, 250, 229, 0.8);
 }

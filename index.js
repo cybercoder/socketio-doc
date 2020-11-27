@@ -92,9 +92,9 @@ get_files(source)
                         onClick="document.getElementById('consoleContainer').style.display = 'none'; document.getElementById('showConsole').style.display='flex';"
                     ></i>
                 </div>
-                <ul id="allEventsList">
+                <ol reversed id="allEventsList">
 
-                </ul>
+                </ol>
             </div>
             <div id="showConsole" onClick="document.getElementById('consoleContainer').style.display='flex'; this.style.display='none'">
                 <i class="lni lni-32 lni-code-alt"></i>
@@ -136,8 +136,20 @@ get_files(source)
 
             socket.on("*",function(event,data) {
                 let li = document.createElement('li');
-                li.innerHTML="<h2><span class='label'>"+event+"</span></h2><code>"+data+"</code>";
-                document.getElementById("allEventsList").appendChild(li);
+                li.innerHTML="\
+                    <div style='display:flex;flex-direction:row;align-items: center;'>\
+                        <div style='flex:0;text-align: center;'>\
+                            <p style='font-size:10px;'>"+new Date().toLocaleString()+"</p>\
+                            <h3><span class='label' style='margin:0'>"+event+"</span></h3>\
+                        </div>\
+                        <div style='flex:1;padding:5px;'>\
+                            <code>"+data+"</code>\
+                        </div>\
+                    </div>\
+                "
+                
+                let list = document.getElementById("allEventsList");
+                list.insertBefore(li, list.firstChild);
             });
         }
     </script>
