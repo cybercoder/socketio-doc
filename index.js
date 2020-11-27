@@ -11,13 +11,19 @@ get_files(source)
 .then(async files=>{
     let results = await Promise.all(files.flat().map(async file=> {
         let c = await parse_file(file);
-        // console.log(c)
-
         return Object.values(c).reduce((result,item)=>{
+            if (!item.tags.some(i=>i.tag==='socket.io-doc')) return result;
             let tag = item.tags.find(i=>i.tag==='tag');
             tag=tag ? tag.name : 'uncategorized';
         
-            let transformed = item.tags.filter(element => check(element))
+            let transformed = item.tags.reduce((r,t)=>{
+                (t.tag === 'listen' || t.tag ==='emit') && (r={...r,action:t.tag, event: t.name});
+                t.tag==='example' && (r={...r, example: t.name.replace(/\n|\r/g, "")+t.description.replace(/\n|\r/g, "")});
+                return r;
+            },{
+                tag,
+                description:item.description || null
+            });
             result.push(transformed);
             return result;
         },[]);
@@ -25,7 +31,6 @@ get_files(source)
     results=results.flat()
 
     let emitLinks = createLinks(results.filter(r=>r.action==='listen'));
-    // console.log(results)
     let converter = new Converter();
     writeFileSync('./templates/default/index.html',
     `<!DOCTYPE html>
@@ -42,7 +47,7 @@ get_files(source)
             <div class="flex two">
                 <div class="full half-900">
                     <span>
-                        1dsfsd
+                        Logo
                     </span>
                 </div>
                 <div class="full half-900">
