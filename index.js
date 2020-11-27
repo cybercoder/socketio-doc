@@ -2,32 +2,31 @@ const {get_files, parse_file, createLinks, extracted_docs_to_html}=require('./li
 const {source} = require('./socket.io-doc.conf.json');
 const {Converter} = require('showdown');
 const {writeFileSync, fstat} = require('fs');
+const { docsSchema } = require('./validations/docs_validation');
+const Validator = require("fastest-validator");
+const v = new Validator();
+const check = v.compile(docsSchema);
 
 get_files(source)
 .then(async files=>{
     let results = await Promise.all(files.flat().map(async file=> {
         let c = await parse_file(file);
+        // console.log(c)
+
         return Object.values(c).reduce((result,item)=>{
-            if (!item.tags.some(i=>i.tag==='socket.io-doc')) return result;
             let tag = item.tags.find(i=>i.tag==='tag');
             tag=tag ? tag.name : 'uncategorized';
         
-            let transformed = item.tags.reduce((r,t)=>{
-                (t.tag === 'listen' || t.tag ==='emit') && (r={...r,action:t.tag, event: t.name});
-                t.tag==='example' && (r={...r, example: t.name.replace(/\n|\r/g, "")+t.description.replace(/\n|\r/g, "")});
-                return r;
-            },{
-                tag,
-                description:item.description || null
-            });
+            let transformed = item.tags.filter(element => check(element))
             result.push(transformed);
             return result;
         },[]);
     }));
-    results=results.flat();
-    let emitLinks = createLinks(results.filter(r=>r.action==='listen'));
-    let converter = new Converter();
+    results=results.flat()
 
+    let emitLinks = createLinks(results.filter(r=>r.action==='listen'));
+    // console.log(results)
+    let converter = new Converter();
     writeFileSync('./templates/default/index.html',
     `<!DOCTYPE html>
     <html lang="en">
