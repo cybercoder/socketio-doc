@@ -24,3 +24,19 @@ footer {
 div {
     /* border: 1px solid teal; */
 }
+
+.emitsMenu ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.emitsMenu ul li {
+    margin: 0;
+    border-bottom: 1px dashed dodgerblue;
+    line-height: 2.5em;
+}
+
+.emitsMenu ul li a{
+    display: block;
+}
