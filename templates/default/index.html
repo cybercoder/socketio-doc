@@ -1,39 +1,4 @@
-const {get_files, parse_file, createLinks, extracted_docs_to_html}=require('./lib');
-const {source} = require('./socket.io-doc.conf.json');
-const {Converter} = require('showdown');
-const {writeFileSync, fstat} = require('fs');
-const { docsSchema } = require('./validations/docs_validation');
-const Validator = require("fastest-validator");
-const v = new Validator();
-const check = v.compile(docsSchema);
-
-get_files(source)
-.then(async files=>{
-    let results = await Promise.all(files.flat().map(async file=> {
-        let c = await parse_file(file);
-        return Object.values(c).reduce((result,item)=>{
-            if (!item.tags.some(i=>i.tag==='socket.io-doc')) return result;
-            let tag = item.tags.find(i=>i.tag==='tag');
-            tag=tag ? tag.name : 'uncategorized';
-        
-            let transformed = item.tags.reduce((r,t)=>{
-                (t.tag === 'listen' || t.tag ==='emit') && (r={...r,action:t.tag, event: t.name});
-                t.tag==='example' && (r={...r, example: t.name.replace(/\n|\r/g, "")+t.description.replace(/\n|\r/g, "")});
-                return r;
-            },{
-                tag,
-                description:item.description || null
-            });
-            result.push(transformed);
-            return result;
-        },[]);
-    }));
-    results=results.flat()
-
-    let emitLinks = createLinks(results.filter(r=>r.action==='listen'));
-    let converter = new Converter();
-    writeFileSync('./templates/default/index.html',
-    `<!DOCTYPE html>
+<!DOCTYPE html>
     <html lang="en">
         <head>
             <meta charset="UTF-8">
@@ -70,12 +35,123 @@ get_files(source)
             <div class="flex three demo">
                 <div class="full sixth-900">
                     <span class="emitsMenu">
-                        ${converter.makeHtml(emitLinks)}
+                        <ul>
+<li><a href="#listen_onReceive">onReceive</a></li>
+<li><a href="#listen_onReceiveme">onReceiveme</a></li>
+</ul>
                     </span>
                 </div>
                 <div class="full two-third-900">
                     <span>
-                        ${extracted_docs_to_html(results)}
+                        <div class="flex" id="emit_send">
+            <article class="card">
+            <header>
+            <h5> category :<span class="label success">Messaging</span></h5>
+            </header>
+            <footer>
+                <div class="flex">
+                description : <p>Singleline or multiline description text. Line breaks are preserved111.</p> 
+                </div>
+                <h5> event : <span class="label"> send</span> </h5>
+                <h5> action : <span class="label"> emit</span> </h5>
+                <div class="flex">
+                <h5>example: </h5>
+                <code class="flex">socket.emit('send', {"id": 1,"title": 5}) </code>
+                <textarea id="send_data">{"id": 1,"title": 5}</textarea>
+                <div>
+                <div>
+                <button
+                    onClick="socket.emit('send', document.getElementById('send_data').value);"
+                    class='success'>
+                        Emit
+                </button>
+                </div>
+            </footer>
+            </article>
+        </div> 
+
+        <div class="flex" id="listen_onReceive">
+            <article class="card">
+            <header>
+            <h5> category :<span class="label success">Messaging</span></h5>
+            </header>
+            <footer>
+                <div class="flex">
+                description : <p>Singleline or multiline description text. Line breaks are preserved.</p> 
+                </div>
+                <h5> event : <span class="label"> onReceive</span> </h5>
+                <h5> action : <span class="label"> listen</span> </h5>
+                <div class="flex">
+                <h5>example: </h5>
+                <code class="flex">socket.emit('onReceive', 5) </code>
+                <textarea id="onReceive_data">5</textarea>
+                <div>
+                <div>
+                <button
+                    onClick="socket.emit('onReceive', document.getElementById('onReceive_data').value);"
+                    class='success'>
+                        Emit
+                </button>
+                </div>
+            </footer>
+            </article>
+        </div> 
+
+        <div class="flex" id="emit_sendme">
+            <article class="card">
+            <header>
+            <h5> category :<span class="label success">Messaging</span></h5>
+            </header>
+            <footer>
+                <div class="flex">
+                description : <p>Singleline or multiline description text. Line breaks are preserved111.</p> 
+                </div>
+                <h5> event : <span class="label"> sendme</span> </h5>
+                <h5> action : <span class="label"> emit</span> </h5>
+                <div class="flex">
+                <h5>example: </h5>
+                <code class="flex">socket.emit('sendme', {"id": 1,"title": 5}) </code>
+                <textarea id="sendme_data">{"id": 1,"title": 5}</textarea>
+                <div>
+                <div>
+                <button
+                    onClick="socket.emit('sendme', document.getElementById('sendme_data').value);"
+                    class='success'>
+                        Emit
+                </button>
+                </div>
+            </footer>
+            </article>
+        </div> 
+
+        <div class="flex" id="listen_onReceiveme">
+            <article class="card">
+            <header>
+            <h5> category :<span class="label success">Messaging</span></h5>
+            </header>
+            <footer>
+                <div class="flex">
+                description : <p>Singleline or multiline description text. Line breaks are preserved.</p> 
+                </div>
+                <h5> event : <span class="label"> onReceiveme</span> </h5>
+                <h5> action : <span class="label"> listen</span> </h5>
+                <div class="flex">
+                <h5>example: </h5>
+                <code class="flex">socket.emit('onReceiveme', 5) </code>
+                <textarea id="onReceiveme_data">5</textarea>
+                <div>
+                <div>
+                <button
+                    onClick="socket.emit('onReceiveme', document.getElementById('onReceiveme_data').value);"
+                    class='success'>
+                        Emit
+                </button>
+                </div>
+            </footer>
+            </article>
+        </div> 
+
+        
                     </span>
                 </div>
                 <div class="full sixth-900"><span>3</span></div>
@@ -119,6 +195,7 @@ get_files(source)
          }
         }
         function addQueryFrom(){
+            
             var form = document.getElementById('queryForm');
             form.insertAdjacentHTML('beforeend','<div class="queryFormParam"><input  value="" class="two-third" type="text" placeholder="key" style="margin:0;"><input  value="" class="two-third" type="text" placeholder="value" style="margin:0;"><button class="sixth pseudo button" style="margin:0;padding:0" onclick="removeQueryFrom(this)"> - </button></div>');
         }
@@ -132,7 +209,6 @@ get_files(source)
                 toggleConnectBtn.textContent='Connect' ;
                 return toggleConnectBtn.classList.remove('success');
             }
-
             let queryParam = {};
             let params = document.querySelectorAll('.queryFormParam')
             for(param of params){
@@ -164,28 +240,11 @@ get_files(source)
 
             socket.on("*",function(event,data) {
                 let li = document.createElement('li');
-                li.innerHTML="\
-                    <div style='display:flex;flex-direction:row;align-items: center;'>\
-                        <div style='flex:0;text-align: center;'>\
-                            <p style='font-size:10px;'>"+new Date().toLocaleString()+"</p>\
-                            <h3><span class='label' style='margin:0'>"+event+"</span></h3>\
-                        </div>\
-                        <div style='flex:1;padding:5px;'>\
-                            <code>"+data+"</code>\
-                        </div>\
-                    </div>\
-                "
+                li.innerHTML="                    <div style='display:flex;flex-direction:row;align-items: center;'>                        <div style='flex:0;text-align: center;'>                            <p style='font-size:10px;'>"+new Date().toLocaleString()+"</p>                            <h3><span class='label' style='margin:0'>"+event+"</span></h3>                        </div>                        <div style='flex:1;padding:5px;'>                            <code>"+data+"</code>                        </div>                    </div>                "
                 
                 let list = document.getElementById("allEventsList");
                 list.insertBefore(li, list.firstChild);
             });
         }
     </script>
-    `
-    )
-
     
-})
-.catch(e=>console.error(e));
-
-
