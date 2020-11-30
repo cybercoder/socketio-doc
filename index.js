@@ -56,12 +56,14 @@ get_files(source)
                     <div class="three flex">
                         <input id="server" value="" class="two-third" type="text" placeholder="socket entry point" style="margin:0;">
                         <button onClick="toggleConnect()" id="connectBtn" class="sixth shyButton" style="margin:0;padding:0">Connect</button>
-                        <button class="sixth pseudo button" style="margin:0;padding:0" onclick="toggleSettingButton()">Settings</button>
-                        <article class="card" id="settingForm">
+                        <button class="sixth pseudo button" style="margin:0;padding:0" onclick="toggleSettingButton()">Query</button>
+                        <article class="card settingsForm" id="settingForm">
                             <div id="queryForm">
 
                             </div>
-                            <button class="sixth pseudo button" style="margin:0;padding:0" onclick="addQueryFrom()"> + </button>
+                            <button class="sixth pseudo button" style="margin:0;padding:0" onclick="addQueryFrom()">
+                                <i class="lni lni-circle-plus"></i>add
+                            </button>
 
                           </article>
                     </div>
@@ -111,7 +113,7 @@ get_files(source)
     <script>
         var socket;
         function toggleSettingButton() {
-            var x = document.getElementById("settingForm");
+            let x = document.getElementById("settingForm");
             if (x.style.display === "none") {
                 x.style.display = "block";
             } else {
@@ -119,8 +121,9 @@ get_files(source)
          }
         }
         function addQueryFrom(){
-            var form = document.getElementById('queryForm');
-            form.insertAdjacentHTML('beforeend','<div class="queryFormParam"><input  value="" class="two-third" type="text" placeholder="key" style="margin:0;"><input  value="" class="two-third" type="text" placeholder="value" style="margin:0;"><button class="sixth pseudo button" style="margin:0;padding:0" onclick="removeQueryFrom(this)"> - </button></div>');
+            let form = document.getElementById('queryForm');
+            form.insertAdjacentHTML('beforeend','<div class="queryFormParam"><input  value="" class="fourth" type="text" placeholder="key" style="margin:0;"><input  value="" class="three-fifth" type="text" placeholder="value" style="margin:0;"><button class="sixth pseudo button" style="margin:0;padding:0" onclick="removeQueryFrom(this)">\
+                <i class="lni lni-circle-minus" style="color: red;" </button></div>');
         }
         function removeQueryFrom(elem){
             elem.parentNode.remove()
@@ -138,7 +141,6 @@ get_files(source)
             for(param of params){
                 queryParam[param.children[0].value] =  param.children[1].value
             }
-            console.log(queryParam)
 
             socket = io.connect(document.getElementById('server').value, {transports: ['websocket'], ...(queryParam && {query:queryParam})});
             

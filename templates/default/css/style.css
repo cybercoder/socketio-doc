@@ -25,6 +25,23 @@ div {
     /* border: 1px solid teal; */
 }
 
+.settingsForm {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    background: thistle;
+    min-height: 10vh;
+    position: fixed;
+    float: right;
+    border: 1px solid slategrey;
+    right: 0;
+    z-index: 9999;
+    top:40px;
+}
+
+.queryFormParam {
+    display: flex;
+    flex-direction: row;
+}
+
 .emitsMenu ul {
     list-style-type: none;
     margin: 0;
