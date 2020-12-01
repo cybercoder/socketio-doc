@@ -77,11 +77,14 @@ get_files(source)
                 </div>
                 <div class="full two-third-900">
                     <span>
-                        ${extracted_docs_to_html(results)}
+                        ${extracted_docs_to_html(results.filter(docs=> docs.action == "emit"))}
                     </span>
                 </div>
                 <div class="full sixth-900"><span>3</span></div>
             </div>
+            <nav>
+              ${extracted_docs_to_html(results.filter(docs=> docs.action == "listen"))}
+            </nav>
             <footer class="flex full">
                 
             </footer>

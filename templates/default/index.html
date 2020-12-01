@@ -46,118 +46,67 @@
                 <div class="full two-third-900">
                     <span>
                         <div class="flex" id="emit_send">
-            <article class="card">
-            <header>
-            <h5> category :<span class="label success">Messaging</span></h5>
-            </header>
-            <footer>
-                <div class="flex">
-                description : <p>Singleline or multiline description text. Line breaks are preserved111.</p> 
-                </div>
-                <h5> event : <span class="label"> send</span> </h5>
-                <h5> action : <span class="label"> emit</span> </h5>
-                <div class="flex">
-                <h5>example: </h5>
-                <code class="flex">socket.emit('send', {"id": 1,"title": 5}) </code>
-                <textarea id="send_data">{"id": 1,"title": 5}</textarea>
-                <div>
-                <div>
-                <button
-                    onClick="socket.emit('send', document.getElementById('send_data').value);"
-                    class='success'>
-                        Emit
-                </button>
-                </div>
-            </footer>
-            </article>
-        </div> 
+                <article class="card">
+                <header>
+                <h5> category :<span class="label success">Messaging</span></h5>
+                </header>
+                <footer>
+                    <div class="flex">
+                    description : <p>Singleline or multiline description text. Line breaks are preserved111.</p> 
+                    </div>
+                    <h5> event : <span class="label"> send</span> </h5>
+                    <h5> action : <span class="label"> emit</span> </h5>
+                    <div class="flex">
+                    <h5>example: </h5>
+                    <code class="flex">socket.emit('send', {"id": 1,"title": 5}) </code>
+                    <textarea id="send_data">{"id": 1,"title": 5}</textarea>
+                    <div>
+                    <div>
+                    <button
+                        onClick="socket.emit('send', document.getElementById('send_data').value);"
+                        class='success'>
+                            Emit
+                    </button>
+                    </div>
+                </footer>
+                </article>
+            </div> 
 
-        <div class="flex" id="listen_onReceive">
-            <article class="card">
-            <header>
-            <h5> category :<span class="label success">Messaging</span></h5>
-            </header>
-            <footer>
-                <div class="flex">
-                description : <p>Singleline or multiline description text. Line breaks are preserved.</p> 
-                </div>
-                <h5> event : <span class="label"> onReceive</span> </h5>
-                <h5> action : <span class="label"> listen</span> </h5>
-                <div class="flex">
-                <h5>example: </h5>
-                <code class="flex">socket.emit('onReceive', 5) </code>
-                <textarea id="onReceive_data">5</textarea>
-                <div>
-                <div>
-                <button
-                    onClick="socket.emit('onReceive', document.getElementById('onReceive_data').value);"
-                    class='success'>
-                        Emit
-                </button>
-                </div>
-            </footer>
-            </article>
-        </div> 
+            <div class="flex" id="emit_sendme">
+                <article class="card">
+                <header>
+                <h5> category :<span class="label success">Messaging</span></h5>
+                </header>
+                <footer>
+                    <div class="flex">
+                    description : <p>Singleline or multiline description text. Line breaks are preserved111.</p> 
+                    </div>
+                    <h5> event : <span class="label"> sendme</span> </h5>
+                    <h5> action : <span class="label"> emit</span> </h5>
+                    <div class="flex">
+                    <h5>example: </h5>
+                    <code class="flex">socket.emit('sendme', {"id": 1,"title": 5}) </code>
+                    <textarea id="sendme_data">{"id": 1,"title": 5}</textarea>
+                    <div>
+                    <div>
+                    <button
+                        onClick="socket.emit('sendme', document.getElementById('sendme_data').value);"
+                        class='success'>
+                            Emit
+                    </button>
+                    </div>
+                </footer>
+                </article>
+            </div> 
 
-        <div class="flex" id="emit_sendme">
-            <article class="card">
-            <header>
-            <h5> category :<span class="label success">Messaging</span></h5>
-            </header>
-            <footer>
-                <div class="flex">
-                description : <p>Singleline or multiline description text. Line breaks are preserved111.</p> 
-                </div>
-                <h5> event : <span class="label"> sendme</span> </h5>
-                <h5> action : <span class="label"> emit</span> </h5>
-                <div class="flex">
-                <h5>example: </h5>
-                <code class="flex">socket.emit('sendme', {"id": 1,"title": 5}) </code>
-                <textarea id="sendme_data">{"id": 1,"title": 5}</textarea>
-                <div>
-                <div>
-                <button
-                    onClick="socket.emit('sendme', document.getElementById('sendme_data').value);"
-                    class='success'>
-                        Emit
-                </button>
-                </div>
-            </footer>
-            </article>
-        </div> 
-
-        <div class="flex" id="listen_onReceiveme">
-            <article class="card">
-            <header>
-            <h5> category :<span class="label success">Messaging</span></h5>
-            </header>
-            <footer>
-                <div class="flex">
-                description : <p>Singleline or multiline description text. Line breaks are preserved.</p> 
-                </div>
-                <h5> event : <span class="label"> onReceiveme</span> </h5>
-                <h5> action : <span class="label"> listen</span> </h5>
-                <div class="flex">
-                <h5>example: </h5>
-                <code class="flex">socket.emit('onReceiveme', 5) </code>
-                <textarea id="onReceiveme_data">5</textarea>
-                <div>
-                <div>
-                <button
-                    onClick="socket.emit('onReceiveme', document.getElementById('onReceiveme_data').value);"
-                    class='success'>
-                        Emit
-                </button>
-                </div>
-            </footer>
-            </article>
-        </div> 
-
-        
+            
                     </span>
                 </div>
                 <div class="full sixth-900"><span>3</span></div>
             </div>
+            <nav>
+               <input type="checkbox" id="listen_onReceiveme" name="onReceiveme" value="onReceiveme"><label for="listen_onReceiveme">onReceiveme</label><br>
+            </nav>
             <footer class="flex full">
                 
             </footer>
