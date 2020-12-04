@@ -28,9 +28,7 @@
     "chalk": "^4.1.0",
     "commander": "^6.2.0",
     "comment-parser": "^0.7.6",
-    "fastest-validator": "^1.9.0",
-    "glob": "^7.1.6",
-    "showdown": "^1.9.1"
+    "glob": "^7.1.6"
   },
   "devDependencies": {
     "chai": "^4.2.0",
