@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const {get_files, parse_file, createLinks, extracted_docs_to_html}=require('./lib');
 const {source} = require('./socket.io-doc.conf.json');
 const {Converter} = require('showdown');

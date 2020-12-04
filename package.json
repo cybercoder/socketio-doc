@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Socket.io inline document generator.",
   "main": "index.js",
+  "bin": {
+    "socketio-doc": "cli.js"
+   },
   "scripts": {
     "test": "./node_modules/.bin/mocha --timeout 2000"
   },
