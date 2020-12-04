@@ -1,58 +1,65 @@
 #!/usr/bin/env node
-const {get_files, parse_file, createLinks, extracted_docs_to_html}=require('./lib');
-const {source} = require('./socket.io-doc.conf.json');
-const {Converter} = require('showdown');
+const {get_files, parse_file, createLinks, extracted_docs_to_html} = require('./lib');
 const fs = require('fs')
-const { docsSchema } = require('./validations/docs_validation');
-const Validator = require("fastest-validator");
-const v = new Validator();
-const check = v.compile(docsSchema);
-const program =  require("commander")
+const socketioDocCli =  require("commander");
 const chalk =  require("chalk");
 
+socketioDocCli.option('-c, --config <string>', 'Specify config path.').action( cmd=> {
+    let {config} = cmd;
+    console.log(chalk.white("\n\tconfig file: "), chalk.gray(config || 'config file not specified, using default.','\n'));
 
+    // check config file flag or default config file existance.
+    if (!config && !fs.existsSync('./socket.io-doc.conf.json')) {
+        return console.log(chalk.red('config file not found.\n'));
+    }
 
+    if (config && !fs.existsSync(config)) {
+        return console.log(chalk.red('specified config file, not found.\n'));
+    }
 
-program
-.command('create')
-.option('-c, --config <string>', 'Specify config path')
-.option('-o, --out <string>', 'Specify config path')
-.action(function (cmd) {
-        console.log(chalk.white(" "))
-        console.log(chalk.white("  config path : "), chalk.gray(cmd.config))
-        console.log(chalk.white(" "))
-        console.log(chalk.white("  output : "), chalk.gray(cmd.out))
-        console.log(chalk.white(" "))
-        const { source } = require(`${cmd.config}`);
-        return get_files(source)
-        .then(async files=>{
-            let results = await Promise.all(files.flat().map(async file=> {
-                let c = await parse_file(file);
-                return Object.values(c).reduce((result,item)=>{
-                    if (!item.tags.some(i=>i.tag==='socket.io-doc')) return result;
-                    let tag = item.tags.find(i=>i.tag==='tag');
-                    tag=tag ? tag.name : 'uncategorized';
-                
-                    let transformed = item.tags.reduce((r,t)=>{
-                        (t.tag === 'listen' || t.tag ==='emit') && (r={...r,action:t.tag, event: t.name});
-                        t.tag==='example' && (r={...r, example: t.name.replace(/\n|\r/g, "")+t.description.replace(/\n|\r/g, "")});
-                        return r;
-                    },{
-                        tag,
-                        description:item.description || null
-                    });
-                    result.push(transformed);
-                    return result;
-                },[]);
-            }));
-        results=results.flat()
+    let { source, destination } = config ? require(`${config}`) : require('./socket.io-doc.conf.json');
 
-        let emitLinks = createLinks(results.filter(r=>r.action==='listen'));
-        let converter = new Converter();
-        fs.mkdirSync(`${cmd.out}/socket-io-test`);
-        fs.mkdirSync(`${cmd.out}/socket-io-test/css`);
-        fs.createReadStream('./templates/default/css/style.css').pipe(fs.createWriteStream(`${cmd.out}/socket-io-test/css/style.css`));
-        fs.writeFileSync(`${cmd.out}/socket-io-test/index.html`,
+    if (!source) {
+        return console.log(chalk.red('source not determined.\n'));
+    }
+
+    if (!destination) {
+        return console.log(chalk.red('destination not determined.\n'));
+    }
+
+    console.log(chalk.green("Start creating documents...\n"));
+
+    return get_files(source)
+    .then(async files=>{
+        let results = await Promise.all(files.flat().map(async file=> {
+            let c = await parse_file(file);
+            return Object.values(c).reduce((result,item)=>{
+                if (!item.tags.some(i=>i.tag==='socket.io-doc')) return result;
+                let tag = item.tags.find(i=>i.tag==='tag');
+                tag=tag ? tag.name : 'uncategorized';
+            
+                let transformed = item.tags.reduce((r,t)=>{
+                    (t.tag === 'listen' || t.tag ==='emit') && (r={...r,action:t.tag, event: t.name});
+                    t.tag==='example' && (r={...r, example: t.name.replace(/\n|\r/g, "")+t.description.replace(/\n|\r/g, "")});
+                    return r;
+                },{
+                    tag,
+                    description:item.description || null
+                });
+                result.push(transformed);
+                return result;
+            },[]);
+        }));
+    
+    results=results.flat();
+
+    let emitLinks = createLinks(results.filter(r=>r.action==='listen'));
+
+    !fs.existsSync(`${destination}`) && fs.mkdirSync(`${destination}`);
+    !fs.existsSync(`${destination}/css`) && fs.mkdirSync(`${destination}/css`);
+
+    fs.createReadStream('./templates/default/css/style.css').pipe(fs.createWriteStream(`${destination}/css/style.css`));
+    fs.writeFileSync(`${destination}/index.html`,
         `<!DOCTYPE html>
         <html lang="en">
             <head>
@@ -65,7 +72,6 @@ program
                 <script src="https://cdn.socket.io/socket.io-3.0.3.min.js"></script>
             </head>
             <body>
-            
                 <div class="flex two">
                     <div class="full half-900">
                         <span>
@@ -78,21 +84,19 @@ program
                             <button onClick="toggleConnect()" id="connectBtn" class="sixth shyButton" style="margin:0;padding:0">Connect</button>
                             <button class="sixth pseudo button" style="margin:0;padding:0" onclick="toggleSettingButton()">Query</button>
                             <article class="card settingsForm" id="settingForm">
-                                <div id="queryForm">
-
-                                </div>
+                                <div id="queryForm"></div>
                                 <button class="sixth pseudo button" style="margin:0;padding:0" onclick="addQueryFrom()">
                                     <i class="lni lni-circle-plus"></i>add
                                 </button>
-
                             </article>
                         </div>
                     </div>
                 </div>
                 <div class="flex three demo">
                     <div class="full sixth-900">
+                        <header><h4>Emits</h4></header>
                         <span class="emitsMenu">
-                            ${converter.makeHtml(emitLinks)}
+                            <ul>${emitLinks}</ul>
                         </span>
                     </div>
                     <div class="full two-third-900">
@@ -101,12 +105,13 @@ program
                         </span>
                     </div>
                     <div class="full sixth-900"><span>
+                        <header><h4>Listens</h4></header>
                         ${extracted_docs_to_html(results.filter(docs=> docs.action === 'emit'))}
                     </span></div>
                 </div>
 
                 <footer class="flex full">
-                    
+                    <p>Powered by: socketio-doc</p>
                 </footer>
                 
                 <div id="consoleContainer" class="normalConsole">
@@ -207,13 +212,10 @@ program
                     list.insertBefore(li, list.firstChild);
                 });
             }
-        </script>
-        `
-        )
-
-        console.log(chalk.green(`  build compeleted :  ${cmd.out}/socket-io-test`))
+        </script>`);
+        console.log(chalk.green(`\tBuild compelete :  ${destination}`))
     })
     .catch(e=>console.error(chalk.red(e)));
    });
 
-   program.parse(process.argv);
+   socketioDocCli.parse(process.argv);

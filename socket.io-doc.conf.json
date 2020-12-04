@@ -1,3 +1,4 @@
 {
-    "source": ["./samples/*.js","samples/*.jsx"]
+    "source": ["./samples/*.js","samples/*.jsx"],
+    "destination" : "./socketio-doc"
 }
