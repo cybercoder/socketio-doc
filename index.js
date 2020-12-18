@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 const {get_files, parse_file, createLinks, generate_html_template} = require('./lib');
-const fs = require('fs')
+const fs = require('fs');
+const path = require('path');
+
 const socketioDocCli =  require("commander");
 const chalk =  require("chalk");
 
@@ -9,15 +11,17 @@ socketioDocCli.option('-c, --config <string>', 'Specify config path.').action( c
     console.log(chalk.white("\n\tconfig file: "), chalk.gray(config || 'config file not specified, using default.','\n'));
 
     // check config file flag or default config file existance.
-    if (!config && !fs.existsSync('./socket.io-doc.conf.json')) {
+    if (!config && !fs.existsSync(path.resolve('./socket.io-doc.conf.json'))) {
         return console.log(chalk.red('config file not found.\n'));
     }
 
-    if (config && !fs.existsSync(config)) {
+    if (config && !fs.existsSync(path.resolve(config))) {
         return console.log(chalk.red('specified config file, not found.\n'));
     }
 
-    let { source, destination } = config ? require(`${config}`) : require('./socket.io-doc.conf.json');
+    let { source, destination, version } = config ? require(path.resolve(`${config}`)) : require(path.resolve('./socket.io-doc.conf.json'));
+
+    destination = path.resolve(destination);
 
     if (!source) {
         return console.log(chalk.red('source not determined.\n'));
@@ -51,16 +55,16 @@ socketioDocCli.option('-c, --config <string>', 'Specify config path.').action( c
             },[]);
         }));
     
-    results=results.flat();
+        results=results.flat();
 
-    let emitLinks = createLinks(results.filter(r=>r.action==='listen'));
+        let emitLinks = createLinks(results.filter(r=>r.action==='listen'));
 
-    !fs.existsSync(`${destination}`) && fs.mkdirSync(`${destination}`);
-    !fs.existsSync(`${destination}/css`) && fs.mkdirSync(`${destination}/css`);
+        !fs.existsSync(`${destination}`) && fs.mkdirSync(`${destination}`);
+        !fs.existsSync(`${destination}/css`) && fs.mkdirSync(`${destination}/css`);
 
-    fs.createReadStream('./templates/default/css/style.css').pipe(fs.createWriteStream(`${destination}/css/style.css`));
-    fs.writeFileSync(`${destination}/index.html`, generate_html_template(emitLinks,results));
-    console.log(chalk.green(`\tBuild compelete :  ${destination}`))
+        fs.createReadStream(`${__dirname}/templates/default/css/style.css`).pipe(fs.createWriteStream(`${destination}/css/style.css`));
+        fs.writeFileSync(`${destination}/index.html`, generate_html_template(emitLinks,results,version));
+        console.log(chalk.green(`\tBuild compelete :  ${destination}`))
     })
     .catch(e=>console.error(chalk.red(e)));
    });

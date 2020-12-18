@@ -1,4 +1,5 @@
 {
+    "version" : "2.3.1",
     "source": ["./samples/*.js","samples/*.jsx"],
     "destination" : "./socketio-doc"
 }
