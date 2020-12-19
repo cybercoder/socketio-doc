@@ -5,7 +5,7 @@
   "main": "index.js",
   "bin": {
     "socketio-doc": "cli.js"
-   },
+  },
   "scripts": {
     "test": "./node_modules/.bin/mocha --timeout 2000"
   },
@@ -16,7 +16,8 @@
   "keywords": [
     "socket.io",
     "doc",
-    "comment"
+    "comment",
+    "websocket"
   ],
   "author": "cybercoder",
   "license": "MIT",
