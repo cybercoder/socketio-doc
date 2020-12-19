@@ -11,7 +11,7 @@ socketioDocCli.option('-c, --config <string>', 'Specify config path.').action( c
     console.log(chalk.white("\n\tconfig file: "), chalk.gray(config || 'config file not specified, using default.','\n'));
 
     // check config file flag or default config file existance.
-    if (!config && !fs.existsSync(path.resolve('./socket.io-doc.conf.json'))) {
+    if (!config && !fs.existsSync(path.resolve('./socketio-doc.conf.json'))) {
         return console.log(chalk.red('config file not found.\n'));
     }
 
@@ -19,7 +19,7 @@ socketioDocCli.option('-c, --config <string>', 'Specify config path.').action( c
         return console.log(chalk.red('specified config file, not found.\n'));
     }
 
-    let { source, destination, version } = config ? require(path.resolve(`${config}`)) : require(path.resolve('./socket.io-doc.conf.json'));
+    let { source, destination, version } = config ? require(path.resolve(`${config}`)) : require(path.resolve('./socketio-doc.conf.json'));
 
     destination = path.resolve(destination);
 
