@@ -1,27 +1,72 @@
-const commentParser = require('comment-parser');
+#!/usr/bin/env node
+const {get_files, parse_file, createLinks, generate_html_template} = require('./lib');
+const fs = require('fs');
+const path = require('path');
 
-const parseFile = file => new Promise((resolve,reject)=>{
-    commentParser.file(file, (err,result)=>err ? reject(err) : resolve(result));
-})
+const socketioDocCli =  require("commander");
+const chalk =  require("chalk");
 
-parseFile('./sample.js').then(c=> {
-    let all = Object.values(c).reduce((result,item)=>{
-        if (!item.tags.some(i=>i.tag==='socket.io-doc')) return result;
-        let category = item.tags.find(i=>i.tag==='tag');
-        category=category ? category.name : 'uncategorized';
+socketioDocCli.option('-c, --config <string>', 'Specify config path.').action( cmd=> {
+    let {config} = cmd;
+    console.log(chalk.white("\n\tconfig file: "), chalk.gray(config || 'config file not specified, using default.','\n'));
 
-        let transformed = item.tags.reduce((r,t)=>{
-            (t.tag === 'listen' || t.tag ==='emit') && (r={...r,action:t.tag, event: t.name});
-            t.tag==='example' && (r={...r, example: t.name.replace(/\n|\r/g, "")+t.description.replace(/\n|\r/g, "")});
-            return r;
-        },{
-            category,
-            description:item.description || null
-        });
-        result.push(transformed);
-        return result;
-    },[]);
+    // check config file flag or default config file existance.
+    if (!config && !fs.existsSync(path.resolve('./socketio-doc.conf.json'))) {
+        return console.log(chalk.red('config file not found.\n'));
+    }
 
-    console.log(all);
-}).catch(e=>console.error(e));
+    if (config && !fs.existsSync(path.resolve(config))) {
+        return console.log(chalk.red('specified config file, not found.\n'));
+    }
 
+    let { source, destination, version } = config ? require(path.resolve(`${config}`)) : require(path.resolve('./socketio-doc.conf.json'));
+
+    destination = path.resolve(destination);
+
+    if (!source) {
+        return console.log(chalk.red('source not determined.\n'));
+    }
+
+    if (!destination) {
+        return console.log(chalk.red('destination not determined.\n'));
+    }
+
+    console.log(chalk.green("Start creating documents...\n"));
+
+    return get_files(source)
+    .then(async files=>{
+        let results = await Promise.all(files.flat().map(async file=> {
+            let c = await parse_file(file);
+            return Object.values(c).reduce((result,item)=>{
+                if (!item.tags.some(i=>i.tag==='socket.io-doc')) return result;
+                let tag = item.tags.find(i=>i.tag==='tag');
+                tag=tag ? tag.name : 'uncategorized';
+            
+                let transformed = item.tags.reduce((r,t)=>{
+                    (t.tag === 'listen' || t.tag ==='emit') && (r={...r,action:t.tag, event: t.name});
+                    t.tag==='example' && (r={...r, example: t.name.replace(/\n|\r/g, "")+t.description.replace(/\n|\r/g, "")});
+                    return r;
+                },{
+                    tag,
+                    description:item.description || null
+                });
+                result.push(transformed);
+                return result;
+            },[]);
+        }));
+    
+        results=results.flat();
+
+        let emitLinks = createLinks(results.filter(r=>r.action==='listen'));
+
+        !fs.existsSync(`${destination}`) && fs.mkdirSync(`${destination}`);
+        !fs.existsSync(`${destination}/css`) && fs.mkdirSync(`${destination}/css`);
+
+        fs.createReadStream(`${__dirname}/templates/default/css/style.css`).pipe(fs.createWriteStream(`${destination}/css/style.css`));
+        fs.writeFileSync(`${destination}/index.html`, generate_html_template(emitLinks,results,version));
+        console.log(chalk.green(`\tBuild compelete :  ${destination}`))
+    })
+    .catch(e=>console.error(chalk.red(e)));
+   });
+
+   socketioDocCli.parse(process.argv);

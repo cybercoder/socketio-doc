@@ -1,1 +1,11 @@
 node_modules
+.idea
+dump.rdb
+.DS_Store
+.vscode
+yarn-error.log
+build
+dist
+doc
+docs
+public

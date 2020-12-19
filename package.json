@@ -3,8 +3,11 @@
   "version": "1.0.0",
   "description": "Socket.io inline document generator.",
   "main": "index.js",
+  "bin": {
+    "socketio-doc": "cli.js"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/.bin/mocha --timeout 2000"
   },
   "repository": {
     "type": "git",
@@ -13,7 +16,8 @@
   "keywords": [
     "socket.io",
     "doc",
-    "comment"
+    "comment",
+    "websocket"
   ],
   "author": "cybercoder",
   "license": "MIT",
@@ -22,7 +26,13 @@
   },
   "homepage": "https://github.com/cybercoder/socketio-doc#readme",
   "dependencies": {
+    "chalk": "^4.1.0",
+    "commander": "^6.2.0",
     "comment-parser": "^0.7.6",
-    "showdown": "^1.9.1"
+    "glob": "^7.1.6"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^8.2.1"
   }
 }
