@@ -29,7 +29,7 @@ By default needs a file named ```socketio-doc.conf.json``` in your project root 
 or you can simply pass custom file: ```socketio-doc -c <filename>```.
 
 ## Inline comments
-This is a example for commenting ```emits```, and ```listens```:
+This is an example for commenting ```emits```, and ```listens```:
 
 ```
     /**
